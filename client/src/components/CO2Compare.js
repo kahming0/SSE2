@@ -5,6 +5,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart,
   Scatter, CartesianGrid, Legend, Label, LabelList,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
+
 
 const MODES = {
   CO2: "CO₂ Compare",
@@ -37,6 +39,12 @@ export default function Co2Comparison() {
   const handleModeChange = (e) => {
     setMode(e.target.value);
     //setSelectedModels([]); 
+  };
+
+  const navigate = useNavigate();
+
+  const handleClick = (data) => {
+    navigate(`/model/${encodeURIComponent(data.name)}`);
   };
 
   return (
@@ -122,7 +130,9 @@ export default function Co2Comparison() {
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="co2" fill="#8884d8" />
+              <Bar dataKey="co2" fill="#8884d8" onClick={handleClick}>
+                <LabelList dataKey="co2" position="top" />
+              </Bar >
           </BarChart>
         ) : (
           <ScatterChart margin={{ top: 20, right: 40, bottom: 40, left: 60 }}>
@@ -148,7 +158,7 @@ export default function Co2Comparison() {
               labelFormatter={(label) => `Model: ${label}`}
             />
             <Legend />
-            <Scatter name="Models" data={chartData} fill="#3182CE">
+            <Scatter name="Models" data={chartData} fill="#3182CE" onClick={handleClick}>
               <LabelList dataKey="name" position="top" />
             </Scatter>
           </ScatterChart>
