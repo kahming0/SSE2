@@ -1,16 +1,10 @@
 import { useState } from "react";
 import data from "./konbert-output-323e23e4.json";
+import Select from 'react-select'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function Co2Comparison() {
   const [selectedModels, setSelectedModels] = useState([]);
-
-  const handleSelectChange = (event) => {
-    const value = event.target.value;
-    if (!selectedModels.includes(value) && selectedModels.length < 5) {
-      setSelectedModels([...selectedModels, value]);
-    }
-  };
 
   const removeModel = (model) => {
     setSelectedModels(selectedModels.filter((m) => m !== model));
@@ -26,18 +20,30 @@ export default function Co2Comparison() {
       <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px", color: "#2D3748" }}>Compare CO₂ Costs</h2>
       
       <div style={{ marginBottom: "16px" }}>
-        <select
-          style={{ border: "1px solid #E2E8F0", padding: "8px", borderRadius: "4px", marginRight: "8px" }}
-          onChange={handleSelectChange}
-          value=""
-        >
-          <option value="" disabled>Select a model</option>
-          {data.map((item) => (
-            <option key={item.fullname} value={item.fullname}>
-              {item.fullname}
-            </option>
-          ))}
-        </select>
+        <Select
+          options={data.map((item) => ({
+            value: item.fullname,
+            label: item.fullname,
+          }))}
+          onChange={(selectedOption) => {
+            if (!selectedOption) return;
+            const value = selectedOption.value;
+            if (!selectedModels.includes(value) && selectedModels.length < 5) {
+              setSelectedModels([...selectedModels, value]);
+            }
+          }}
+          placeholder="Select a model"
+          isSearchable
+          styles={{
+            control: (base) => ({
+              ...base,
+              border: "1px solid #E2E8F0",
+              padding: "2px",
+              borderRadius: "4px",
+              marginRight: "8px",
+            }),
+          }}
+        />
       </div>
 
       <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px" }}>
