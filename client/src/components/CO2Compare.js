@@ -1,5 +1,5 @@
 import { useState } from "react";
-import data from "./konbert-output-323e23e4.json";
+import data from "../konbert-output-323e23e4.json";
 import Select from 'react-select'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
