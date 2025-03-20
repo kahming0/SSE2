@@ -16,7 +16,7 @@ export default function Co2Comparison() {
   });
 
   return (
-    <div style={{ padding: "24px" }}>
+    <div>
       <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px", color: "#2D3748" }}>Compare CO₂ Costs</h2>
       
       <div style={{ marginBottom: "16px" }}>
