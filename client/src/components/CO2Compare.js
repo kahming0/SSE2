@@ -1,5 +1,4 @@
 import { useState } from "react";
-import data from "../konbert-output-323e23e4.json";
 import Select from 'react-select'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart,
@@ -13,7 +12,8 @@ const MODES = {
   SCATTER: "CO₂ vs Performance",
 };
 
-export default function Co2Comparison() {
+export default function Co2Comparison({data}) {
+  // console.log(data);
   const [selectedModels, setSelectedModels] = useState([]);
   const [mode, setMode] = useState(MODES.CO2);
 

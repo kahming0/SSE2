@@ -1,9 +1,8 @@
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from "recharts";
-import data from "../konbert-output-323e23e4.json";
 
 
-export default function TopCO2() {
+export default function TopCO2({data}) {
   const sorted = [...data].sort((a, b) => a["CO₂ cost (kg)"] - b["CO₂ cost (kg)"]);
   const lowest = sorted.slice(0, 10);
   const highest = sorted.slice(-10).reverse();
