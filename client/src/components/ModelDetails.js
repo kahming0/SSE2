@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
-import data from "../konbert-output-323e23e4.json";
 
-export default function ModelDetails() {
+export default function ModelDetails({data}) {
   const { name } = useParams();
   const decodedName = decodeURIComponent(name);
   const model = data.find((item) => item.fullname === decodedName);

@@ -1,25 +1,28 @@
 import React from "react";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend, Label
-} from "recharts";
-import data from "../konbert-output-323e23e4.json";
+  Tooltip, ResponsiveContainer, Legend, Label } from "recharts";
 
-export default function CO2vsPerformance() {
+export default function CO2vsPerformance({ data }) {
+  // Check if data is loaded
+  if (!data || data.length === 0) {
+    return <div>Loading...</div>; // Show a loading message if data is undefined or empty
+  }
+
   const formatData = data
-  .map((item) => {
-    const co2 = parseFloat(item["CO₂ cost (kg)"]);
-    const performance = parseFloat(item["Average ⬆️"]);
-    
-    return {
-      name: item.fullname,
-      co2,
-      performance,
-    };
-  })
-  .filter((item) => !isNaN(item.co2) && !isNaN(item.performance)); 
+    .map((item) => {
+      const co2 = parseFloat(item["CO₂ cost (kg)"]);
+      const performance = parseFloat(item["Average ⬆️"]);
+
+      return {
+        name: item.fullname,
+        co2,
+        performance,
+      };
+    })
+    .filter((item) => !isNaN(item.co2) && !isNaN(item.performance)); 
 
   console.log(formatData);
-  console.log(Object.keys(data[0]));
+  console.log(Object.keys(data[0]));  // Debugging line
 
   return (
     <div style={{ marginTop: "40px" }}>
