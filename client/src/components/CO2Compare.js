@@ -29,6 +29,8 @@ export default function Co2Comparison({data}) {
       name: model, 
       co2: modelData ? parseFloat(modelData["CO₂ cost (kg)"]) : 0,
       performance: modelData ? parseFloat(modelData["Average ⬆️"]) : null,
+      chat_template: modelData["Chat Template"] ? "Yes" : "No",
+      energy_rating: "Placeholder",
     }
   });
 
@@ -200,6 +202,10 @@ export default function Co2Comparison({data}) {
             <ul>
               <li><strong>CO₂ Cost (kg):</strong> {selectedModel.co2}</li>
               <li><strong>Performance:</strong> {selectedModel.performance}</li>
+              <li>
+                <strong>Chat Template:</strong> {selectedModel.chat_template}
+              </li>
+              <li><strong>Energy Efficiency Rating:</strong> A (Placeholder)</li>
             </ul>
             <button
               onClick={closeModal}
