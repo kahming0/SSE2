@@ -3,9 +3,8 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend, Label } from "recharts";
 
 export default function CO2vsPerformance({ data }) {
-  // Check if data is loaded
   if (!data || data.length === 0) {
-    return <div>Loading...</div>; // Show a loading message if data is undefined or empty
+    return <div>Loading...</div>; 
   }
 
   const formatData = data
@@ -21,8 +20,8 @@ export default function CO2vsPerformance({ data }) {
     })
     .filter((item) => !isNaN(item.co2) && !isNaN(item.performance)); 
 
-  console.log(formatData);
-  console.log(Object.keys(data[0]));  // Debugging line
+  //console.log(formatData);
+  //console.log(Object.keys(data[0]));
 
   return (
     <div style={{ marginTop: "40px" }}>

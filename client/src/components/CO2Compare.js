@@ -16,6 +16,8 @@ export default function Co2Comparison({data}) {
   // console.log(data);
   const [selectedModels, setSelectedModels] = useState([]);
   const [mode, setMode] = useState(MODES.CO2);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(null);
 
   const removeModel = (model) => {
     setSelectedModels(selectedModels.filter((m) => m !== model));
@@ -23,8 +25,12 @@ export default function Co2Comparison({data}) {
 
   const chartData = selectedModels.map((model) => {
     const modelData = data.find((item) => item.fullname === model);
-    return { name: model, co2: modelData ? parseFloat(modelData["CO₂ cost (kg)"]) : 0,
+    return { 
+      name: model, 
+      co2: modelData ? parseFloat(modelData["CO₂ cost (kg)"]) : 0,
       performance: modelData ? parseFloat(modelData["Average ⬆️"]) : null,
+      chat_template: modelData["Chat Template"] ? "Yes" : "No",
+      energy_rating: "Placeholder",
     }
   });
 
@@ -44,7 +50,14 @@ export default function Co2Comparison({data}) {
   const navigate = useNavigate();
 
   const handleClick = (data) => {
-    navigate(`/model/${encodeURIComponent(data.name)}`);
+    //navigate (`/model/${encodeURIComponent(data.name)}`);
+    setSelectedModel(data);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedModel(null);
   };
 
   return (
@@ -151,19 +164,65 @@ export default function Co2Comparison({data}) {
               name="Performance"
               tick={{ fontSize: 12 }}
             >
-              <Label value="Performance Score" angle={-90} position="insideLeft" />
+              <Label value="Performance Score" angle={-90} position="center" />
             </YAxis>
             <Tooltip
-              formatter={(value, name) => [value, name === "co2" ? "CO₂ (kg)" : "Performance"]}
               labelFormatter={(label) => `Model: ${label}`}
             />
-            <Legend />
-            <Scatter name="Models" data={chartData} fill="#3182CE" onClick={handleClick}>
-              <LabelList dataKey="name" position="top" />
+              <Scatter name="Models" data={chartData} fill="#3182CE" onClick={handleClick}>
+                <LabelList dataKey="name" position="top" />
             </Scatter>
           </ScatterChart>
         )}
       </ResponsiveContainer>
+
+      {isModalOpen && selectedModel && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          zIndex: 1000,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
+          <div style={{
+            background: "white",
+            padding: "24px",
+            borderRadius: "8px",
+            minWidth: "300px",
+            maxWidth: "500px",
+            maxHeight: "80vh",
+            overflowY: "auto",
+          }}>
+            <h2>{selectedModel.name}</h2>
+            <ul>
+              <li><strong>CO₂ Cost (kg):</strong> {selectedModel.co2}</li>
+              <li><strong>Performance:</strong> {selectedModel.performance}</li>
+              <li>
+                <strong>Chat Template:</strong> {selectedModel.chat_template}
+              </li>
+              <li><strong>Energy Efficiency Rating:</strong> A (Placeholder)</li>
+            </ul>
+            <button
+              onClick={closeModal}
+              style={{
+                backgroundColor: "#E53E3E",
+                padding: "8px 16px",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
