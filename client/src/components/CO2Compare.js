@@ -12,6 +12,13 @@ const MODES = {
   SCATTER: "CO₂ vs Performance",
 };
 
+function getCO2Equivalents(co2Kg) {
+  return {
+    kmsDriven: ((co2Kg / 0.393) * 1.60934).toFixed(0),
+    smartphonesCharged: (co2Kg / 0.0124).toFixed(0),
+  };
+}
+
 export default function Co2Comparison({data}) {
   // console.log(data);
   const [selectedModels, setSelectedModels] = useState([]);
@@ -59,6 +66,8 @@ export default function Co2Comparison({data}) {
     setIsModalOpen(false);
     setSelectedModel(null);
   };
+
+  const equivalents = selectedModel ? getCO2Equivalents(selectedModel.co2) : null;
 
   return (
     <div style={{ padding: "24px" }}>
@@ -207,6 +216,17 @@ export default function Co2Comparison({data}) {
               </li>
               <li><strong>Energy Efficiency Rating:</strong> A (Placeholder)</li>
             </ul>
+
+            <hr style={{ margin: "16px 0" }} />
+
+            <div>
+              <h3 style={{ fontWeight: "bold", marginBottom: "8px" }}>CO₂-to-Everyday Equivalent:</h3>
+              <ul style={{ listStyle: "disc", marginLeft: "20px" }}>
+                <li>{equivalents.kmsDriven} km driven</li>
+                <li>{equivalents.smartphonesCharged} smartphones charged</li>
+              </ul>
+            </div>
+
             <button
               onClick={closeModal}
               style={{

@@ -26,7 +26,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <Router basename="/SSE2">
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">CO₂ Cost Data Viewer</h1>
         <Routes>
@@ -41,6 +41,7 @@ function App() {
             }
           />
           <Route path="/model/:name" element={<ModelDetails data={data} />} />
+          <Route path="*" element={<h2>404 Not Found</h2>} />          
         </Routes>
       </div>
     </Router>
