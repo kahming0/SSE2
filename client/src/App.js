@@ -3,6 +3,7 @@ import CO2Compare from "./components/CO2Compare.js";
 import TopCO2BarChart from './components/TopCO2.js';
 import CO2vsPerformance from './components/CO2vsPerformance.js';
 import ModelDetails from './components/ModelDetails';
+import CO2CompareBenchmarks from './components/CO2CompareBenchmarks.js';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { asyncBufferFromUrl, parquetReadObjects } from 'hyparquet';
@@ -35,6 +36,7 @@ function App() {
             element={
               <>
                 <CO2Compare data={data} />
+                <CO2CompareBenchmarks data={data} />
                 <TopCO2BarChart data={data} />
                 <CO2vsPerformance data={data} />
               </>

@@ -9,8 +9,8 @@ import {
 } from "recharts";
 import { useNavigate } from "react-router-dom";
 
-// const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
-// const checkbox_labels = ["Average ⬆️", "IFEval", "BBH", "MATH Lvl 5", "GPQA", "MUSR", "MMLU-PRO"];  // Just a heads up we need the emoji to get the average data
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+const checkbox_labels = ["Average ⬆️", "IFEval", "BBH", "MATH Lvl 5", "GPQA", "MUSR", "MMLU-PRO"];  // Just a heads up we need the emoji to get the average data
 
 
 const MODES = {
@@ -36,6 +36,30 @@ export default function Co2Comparison({data}) {
     setSelectedModels(selectedModels.filter((m) => m !== model));
   };
 
+  // Checkbox states. Fills it with an array of length checkbox_labels so if we add more please add it there.
+  const [checkstates, checkboxStates] = useState(Array(checkbox_labels.length).fill(false));
+
+  const [graphState, setGraphState] = useState(false);
+
+  // Handles what happens when you press a checkbox. Simply toggles the target box on or off. It is a bit convoluted but apparently needed for this.
+  const handleChange = (event, pos) => {
+    const copy = [];
+    var gState = false;
+    for (let i = 0; i < checkstates.length; i++) {
+        if (i == pos) {
+          copy[i] = event.target.checked;
+        } else {
+          copy[i] = checkstates[i];
+        }
+        // True if anything of the checkboxstates is true
+        gState = gState || copy[i];
+    }
+    checkboxStates(copy);
+
+    // If graphstate is false we show co2. If it is true we do not show it.
+    setGraphState(gState);
+  };
+
   const chartData = selectedModels.map((model) => {
     const modelData = data.find((item) => item.fullname === model);
     return {
@@ -44,6 +68,13 @@ export default function Co2Comparison({data}) {
       performance: modelData ? parseFloat(modelData["Average ⬆️"]).toFixed(2) : null,
       chat_template: modelData["Chat Template"] ? "Yes" : "No",
       energy_rating: "Placeholder",
+      average: modelData ? modelData[checkbox_labels[0]] : 0,
+        moe: modelData ? modelData[checkbox_labels[1]] : 0,
+        bbh: modelData ? modelData[checkbox_labels[2]] : 0,
+        mth: modelData ? modelData[checkbox_labels[3]] : 0,
+        gpqa: modelData ? modelData[checkbox_labels[4]] : 0,
+        musr: modelData ? modelData[checkbox_labels[5]] : 0,
+        mmlupro: modelData ? modelData[checkbox_labels[6]] : 0
     }
   });
 
@@ -60,7 +91,7 @@ export default function Co2Comparison({data}) {
     //setSelectedModels([]);
   };
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleClick = (data) => {
     //navigate (`/model/${encodeURIComponent(data.name)}`);
@@ -77,25 +108,9 @@ export default function Co2Comparison({data}) {
 
   return (
     <div style={{ padding: "24px" }}>
-      <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px", color: "#2D3748" }}>Compare CO₂ Costs</h2>
+      <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px", color: "#2D3748" }}>Compare CO₂ Costs For Benchmarks</h2>
 
       <div style={{ marginBottom: "16px" }}>
-        <select
-          onChange={handleModeChange}
-          value={mode}
-          style={{
-            padding: "8px",
-            borderRadius: "4px",
-            border: "1px solid #CBD5E0",
-            marginBottom: "8px",
-          }}
-        >
-          {Object.values(MODES).map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
       </div>
 
       <div style={{ marginBottom: "16px" }}>
@@ -114,14 +129,24 @@ export default function Co2Comparison({data}) {
               padding: "2px",
               borderRadius: "4px",
               marginRight: "8px",
-			  width: "50%",
-			  display: "inline-flex",
+              width: "50%",
+              display: "inline-flex",
             }),
           }}
         />
-		<div style={{width: "50%", display:"inline-flex" }}>
+        <div style={{width: "50%", display:"inline-flex" }}>
 
-		</div>
+        <FormGroup style={{display:"inline-block"}}>
+            <FormControlLabel control={<Checkbox checked={checkstates[0]} onChange={(e) => handleChange(e, 0)}/>} label="Average" /> {/* Sorry I just really don't want the emoji in the label */}
+            <FormControlLabel control={<Checkbox checked={checkstates[1]} onChange={(e) => handleChange(e, 1)}/>} label={checkbox_labels[1]} />
+            <FormControlLabel control={<Checkbox checked={checkstates[2]} onChange={(e) => handleChange(e, 2)}/>} label={checkbox_labels[2]} />
+            <FormControlLabel control={<Checkbox checked={checkstates[3]} onChange={(e) => handleChange(e, 3)}/>} label="MATH" />
+            <FormControlLabel control={<Checkbox checked={checkstates[4]} onChange={(e) => handleChange(e, 4)}/>} label={checkbox_labels[4]} />
+            <FormControlLabel control={<Checkbox checked={checkstates[5]} onChange={(e) => handleChange(e, 5)}/>} label={checkbox_labels[5]} />
+            <FormControlLabel control={<Checkbox checked={checkstates[6]} onChange={(e) => handleChange(e, 6)}/>} label={checkbox_labels[6]} />
+        </FormGroup>
+
+        </div>
 
       </div>
 
@@ -159,39 +184,17 @@ export default function Co2Comparison({data}) {
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
-        { mode === MODES.CO2 ? (
           <BarChart data={chartData}>
             <XAxis dataKey="name" />
             <YAxis />
-			{<Bar dataKey="co2"     fill="#8884d8" onClick={handleClick} LabelList={{dataKey:"co2", position:"top"}} />}
-			</BarChart>
-        ) : (
-          <ScatterChart margin={{ top: 20, right: 40, bottom: 40, left: 60 }}>
-            <CartesianGrid />
-            <XAxis
-              type="number"
-              dataKey="co2"
-              name="CO₂ (kg)"
-              tick={{ fontSize: 12 }}
-            >
-              <Label value="CO₂ Emission (kg)" offset={-10} position="insideBottom" />
-            </XAxis>
-            <YAxis
-              type="number"
-              dataKey="performance"
-              name="Performance"
-              tick={{ fontSize: 12 }}
-            >
-              <Label value="Performance Score" angle={-90} position="center" />
-            </YAxis>
-            <Tooltip
-              labelFormatter={(label) => `Model: ${label}`}
-            />
-              <Scatter name="Models" data={chartData} fill="#3182CE" onClick={handleClick}>
-                <LabelList dataKey="name" position="top" />
-            </Scatter>
-          </ScatterChart>
-        )}
+            {checkstates[0] ?    <Bar dataKey="average" fill="#ee6699" onClick={handleClick} LabelList={{dataKey:"average", position:"top"}} /> : null}
+            {checkstates[1] ?    <Bar dataKey="moe"     fill="#aa8888" onClick={handleClick} LabelList={{dataKey:"moe", position:"top"}} /> : null}
+            {checkstates[2] ?    <Bar dataKey="bbh"     fill="#88aa88" onClick={handleClick} LabelList={{dataKey:"bbh", position:"top"}} /> : null}
+            {checkstates[3] ?    <Bar dataKey="mth"     fill="#8888aa" onClick={handleClick} LabelList={{dataKey:"mth", position:"top"}} /> : null}
+            {checkstates[4] ?    <Bar dataKey="gpqa"    fill="#999999" onClick={handleClick} LabelList={{dataKey:"gpqa", position:"top"}} /> : null}
+            {checkstates[5] ?    <Bar dataKey="musr"    fill="#555555" onClick={handleClick} LabelList={{dataKey:"musr", position:"top"}} /> : null}
+            {checkstates[6] ?    <Bar dataKey="mmlupro" fill="#7120ab" onClick={handleClick} LabelList={{dataKey:"mmlupro", position:"top"}} /> : null}
+          </BarChart>
       </ResponsiveContainer>
 
       {isModalOpen && selectedModel && (
