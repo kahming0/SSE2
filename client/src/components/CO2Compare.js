@@ -201,28 +201,18 @@ export default function Co2Comparison({data}) {
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData}>
-          <XAxis dataKey="name" />
-          <YAxis label="CO2 cost (kg)" />
-          <Tooltip />
-		  {graphState ? null : <Bar dataKey="co2" fill="#8884d8" />}
-		  {checkstates[0] ? <Bar dataKey="average" fill="#ee6699" /> : null}
-		  {checkstates[1] ? <Bar dataKey="moe" fill="#aa8888" /> : null}
-		  {checkstates[2] ? <Bar dataKey="bbh" fill="#88aa88" /> : null}
-		  {checkstates[3] ? <Bar dataKey="mth" fill="#8888aa" /> : null}
-		  {checkstates[4] ? <Bar dataKey="gpqa" fill="#999999" /> : null}
-		  {checkstates[5] ? <Bar dataKey="musr" fill="#555555" /> : null}
-		  {checkstates[6] ? <Bar dataKey="mmlupro" fill="#7120ab" /> : null}
-
-        </BarChart>
         { mode === MODES.CO2 ? (
           <BarChart data={chartData}>
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
-              <Bar dataKey="co2" fill="#8884d8" onClick={handleClick}>
-                <LabelList dataKey="co2" position="top" />
-              </Bar >
+			{graphState ? null : <Bar dataKey="co2"     fill="#8884d8" onClick={handleClick} LabelList={{dataKey:"co2", position:"top"}} />}
+			{checkstates[0] ?    <Bar dataKey="average" fill="#ee6699" onClick={handleClick} LabelList={{dataKey:"average", position:"top"}} /> : null}
+			{checkstates[1] ?    <Bar dataKey="moe"     fill="#aa8888" onClick={handleClick} LabelList={{dataKey:"moe", position:"top"}} /> : null}
+			{checkstates[2] ?    <Bar dataKey="bbh"     fill="#88aa88" onClick={handleClick} LabelList={{dataKey:"bbh", position:"top"}} /> : null}
+			{checkstates[3] ?    <Bar dataKey="mth"     fill="#8888aa" onClick={handleClick} LabelList={{dataKey:"mth", position:"top"}} /> : null}
+			{checkstates[4] ?    <Bar dataKey="gpqa"    fill="#999999" onClick={handleClick} LabelList={{dataKey:"gpqa", position:"top"}} /> : null}
+			{checkstates[5] ?    <Bar dataKey="musr"    fill="#555555" onClick={handleClick} LabelList={{dataKey:"musr", position:"top"}} /> : null}
+			{checkstates[6] ?    <Bar dataKey="mmlupro" fill="#7120ab" onClick={handleClick} LabelList={{dataKey:"mmlupro", position:"top"}} /> : null}
           </BarChart>
         ) : (
           <ScatterChart margin={{ top: 20, right: 40, bottom: 40, left: 60 }}>
