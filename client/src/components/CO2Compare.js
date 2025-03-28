@@ -1,7 +1,12 @@
 import { useState } from "react";
-import Checkbox from '@mui/material/Checkbox';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from '@mui/material';
 import Select from 'react-select'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart,
@@ -74,6 +79,8 @@ export default function Co2Comparison({data}) {
   };
 
   const equivalents = selectedModel ? getCO2Equivalents(selectedModel.co2) : null;
+
+  const [modelToRemove, setModelToRemove] = useState(null);
 
   return (
     <div style={{ padding: "24px" }}>
@@ -150,10 +157,36 @@ export default function Co2Comparison({data}) {
                 cursor: "pointer",
                 color: "#E53E3E"
               }}
-              onClick={() => removeModel(model)}
+              onClick={() => setModelToRemove(model)}
             >
               ✕
             </button>
+            <Dialog
+              open={Boolean(modelToRemove)}
+              onClose={() => setModelToRemove(null)}
+            >
+              <DialogTitle>Remove Model</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Are you sure you want to remove <strong>{modelToRemove}</strong> from the comparison?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setModelToRemove(null)} color="primary">
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    removeModel(modelToRemove);
+                    setModelToRemove(null);
+                  }}
+                  color="error"
+                  variant="contained"
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
         ))}
       </div>
