@@ -60,6 +60,16 @@ export default function Co2Comparison({data}) {
     setGraphState(gState);
   };
 
+  const keyMapping = {
+    average: "Average",
+    moe: "IFEval",
+    bbh: "BBH",
+    mth: "MATH",
+    gpqa: "GPQA",
+    musr: "MUSR",
+    mmlupro: "MMLU-PRO",
+  };
+
   const chartData = selectedModels.map((model) => {
     const modelData = data.find((item) => item.fullname === model);
     return {
@@ -68,13 +78,13 @@ export default function Co2Comparison({data}) {
       performance: modelData ? parseFloat(modelData["Average ⬆️"]).toFixed(2) : null,
       chat_template: modelData["Chat Template"] ? "Yes" : "No",
       energy_rating: "Placeholder",
-      average: modelData ? modelData[checkbox_labels[0]] : 0,
-        moe: modelData ? modelData[checkbox_labels[1]] : 0,
-        bbh: modelData ? modelData[checkbox_labels[2]] : 0,
-        mth: modelData ? modelData[checkbox_labels[3]] : 0,
-        gpqa: modelData ? modelData[checkbox_labels[4]] : 0,
-        musr: modelData ? modelData[checkbox_labels[5]] : 0,
-        mmlupro: modelData ? modelData[checkbox_labels[6]] : 0
+      average: modelData ? parseFloat(modelData[checkbox_labels[0]]).toFixed(2) : 0,
+        moe: modelData ? parseFloat(modelData[checkbox_labels[1]]).toFixed(2) : 0,
+        bbh: modelData ? parseFloat(modelData[checkbox_labels[2]]).toFixed(2) : 0,
+        mth: modelData ? parseFloat(modelData[checkbox_labels[3]]).toFixed(2) : 0,
+        gpqa: modelData ? parseFloat(modelData[checkbox_labels[4]]).toFixed(2) : 0,
+        musr: modelData ? parseFloat(modelData[checkbox_labels[5]]).toFixed(2) : 0,
+        mmlupro: modelData ? parseFloat(modelData[checkbox_labels[6]]).toFixed(2) : 0
     }
   });
 
@@ -187,6 +197,10 @@ export default function Co2Comparison({data}) {
           <BarChart data={chartData}>
             <XAxis dataKey="name" />
             <YAxis />
+          <Tooltip
+            formatter={(value, name) => [value, keyMapping[name]]}
+            labelFormatter={(label) => `Model: ${label}`}
+          />
             {checkstates[0] ?    <Bar dataKey="average" fill="#ee6699" onClick={handleClick} LabelList={{dataKey:"average", position:"top"}} /> : null}
             {checkstates[1] ?    <Bar dataKey="moe"     fill="#aa8888" onClick={handleClick} LabelList={{dataKey:"moe", position:"top"}} /> : null}
             {checkstates[2] ?    <Bar dataKey="bbh"     fill="#88aa88" onClick={handleClick} LabelList={{dataKey:"bbh", position:"top"}} /> : null}

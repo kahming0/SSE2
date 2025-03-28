@@ -196,6 +196,12 @@ export default function Co2Comparison({data}) {
           <BarChart data={chartData}>
             <XAxis dataKey="name" />
             <YAxis />
+            <Tooltip
+            formatter={(value, name) => {
+              const formattedValue = value;
+              return [formattedValue, name === "co2" ? "CO₂ (kg)" : "Performance"];
+            }}
+            labelFormatter={(label) => `Model: ${label}`} />
 			{<Bar dataKey="co2"     fill="#8884d8" onClick={handleClick} LabelList={{dataKey:"co2", position:"top"}} />}
 			</BarChart>
         ) : (
