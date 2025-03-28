@@ -41,14 +41,16 @@ function App() {
 
         <Tabs value={tabIndex} onChange={handleTabChange} aria-label="CO2 Tabs">
           <Tab label="Compare Models" />
+          <Tab label="Compare Benchmarks" />
           <Tab label="Top CO₂ Models" />
-          <Tab label="CO₂ Calculator" />
+          <Tab label="CO₂ vs Performance" />
         </Tabs>
 
-        <Box sx={{ mt: 1 }}>
-          {tabIndex === 0 && <CO2Compare data={data}/>}
-          {tabIndex === 1 && <TopCO2BarChart data={data} />}
-          {tabIndex === 2 && <CO2vsPerformance data={data} /> }
+        <Box sx={{ mt: 2 }}>
+          {tabIndex === 0 && <CO2Compare data={data} />}
+          {tabIndex === 1 && <CO2CompareBenchmarks data={data} />}
+          {tabIndex === 2 && <TopCO2BarChart data={data} />}
+          {tabIndex === 3 && <CO2vsPerformance data={data} /> }
         </Box>
       </Box>
     </Router>
