@@ -23,7 +23,10 @@ export default function CO2Calculation() {
         </h2>
       </div>
       {isOpen && (
-        <div class="dropdownData">
+        <div style={{ marginTop: "8px", paddingLeft: "30px"}}>
+          <p>
+            Huggingface is a company which is dedicated to creating a community which can collaborate on machine learning models. 
+          </p>
           <p>Hugging Face uses the following function to estimate the CO₂ emissions:</p>
 
             <div style={{ paddingLeft: "16px" }}>
