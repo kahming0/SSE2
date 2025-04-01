@@ -35,7 +35,7 @@ export default function CO2Calculation() {
               - <strong>T</strong> = Total time the model runs (hours) <br />
               - <strong>E</strong> = Energy source emissions factor (kg CO₂ per kWh) <br />
             </div>
-        
+
           <p>The function assumes the workload is running on 8 NVIDIA H100 SXM GPUs in Northern Virginia.</p>
           <a href="https://huggingface.co/docs/leaderboards/open_llm_leaderboard/emissions" target="_blank" rel="noopener noreferrer">
             Click here for more information on Hugging Face's CO₂ calculations.

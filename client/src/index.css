@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.YAxis {
+	x: -110;
+	y: -120;
+	transform: rotate(-90deg);
+}
