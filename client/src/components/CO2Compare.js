@@ -2,12 +2,11 @@ import { useState } from "react";
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
   Button, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper
+  TableRow, Paper, Autocomplete, TextField, Box, Stack, FormControl, InputLabel, 
+  Select, MenuItem, Typography
 } from '@mui/material';
 
 
-
-import Select from 'react-select'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart,
   Scatter, CartesianGrid, Legend, Label, LabelList,
@@ -35,6 +34,9 @@ export default function Co2Comparison({data}) {
   const [mode, setMode] = useState(MODES.CO2);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState(null);
+  const [tempValue, setTempValue] = useState(null);
+  const [limitDialogOpen, setLimitDialogOpen] = useState(false);
+  const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
 
   const removeModel = (model) => {
     setSelectedModels(selectedModels.filter((m) => m !== model));
@@ -76,6 +78,7 @@ export default function Co2Comparison({data}) {
     setIsModalOpen(false);
     setSelectedModel(null);
   };
+  
 
   const equivalents = selectedModel ? getCO2Equivalents(selectedModel.co2) : null;
 
@@ -111,57 +114,104 @@ export default function Co2Comparison({data}) {
     { label: "#Params (B)", key: "#Params (B)" },
     { label: "Chat Template", key: "Chat Template" },
   ];
+
+  const handleAddModel = (modelName) => {
+    if (!modelName) return;
+
+    if (selectedModels.length >= 5) {
+      setLimitDialogOpen(true);
+      return;
+    }
+
+    if (selectedModels.includes(modelName)) {
+      setDuplicateDialogOpen(true);
+      return;
+    }
+  
+    setSelectedModels([...selectedModels, modelName]);
+    setTempValue(null);
+  }
+  
   return (
     <div style={{ padding: "24px" }}>
       <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px", color: "#2D3748" }}>Compare CO₂ Costs</h2>
 
       <div style={{ marginBottom: "16px" }}>
-        <select
-          onChange={handleModeChange}
-          value={mode}
-          style={{
-            padding: "8px",
-            borderRadius: "4px",
-            border: "1px solid #CBD5E0",
-            marginBottom: "8px",
-          }}
-        >
-          {Object.values(MODES).map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center" flexWrap="wrap">
+            <FormControl size="small" sx={{ minWidth: 200 }}>
+              <InputLabel id="mode-select-label">Graph mode</InputLabel>
+              <Select
+                labelId="mode-select-label"
+                value={mode}
+                label="Graph Mode"
+                onChange={handleModeChange}
+              >
+                {Object.values(MODES).map((m) => (
+                  <MenuItem key={m} value={m}>{m}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <Autocomplete
+              options={
+                data.map((item) => item.fullname)
+                .filter((name) => !selectedModels.includes(name))
+              }
+              value={tempValue}
+              onChange={(event, newValue) => setTempValue(newValue)}
+              renderInput={(params) => (
+                <TextField {...params} label="Search HuggingFace model" size="small" />
+              )}
+              sx={{ minWidth: 250 }}
+            />
+
+            <Button
+              variant="contained"
+              onClick={() => handleAddModel(tempValue)}
+              disabled={!tempValue}
+              size="small"
+            >
+              Add Model To Compare
+            </Button>
+            <Typography variant="caption" sx={{ color: selectedModels.length >= 5 ? 'error.main' : 'text.secondary' }}>
+              {selectedModels.length} / 5 models selected
+            </Typography>
+          </Stack>
+
+          <Dialog open={limitDialogOpen} onClose={() => setLimitDialogOpen(false)}>
+            <DialogTitle>Limit Reached</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                You can only compare up to 5 models at a time.
+                Please remove a model to add a new one.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setLimitDialogOpen(false)} autoFocus>
+                Got it
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog open={duplicateDialogOpen} onClose={() => setDuplicateDialogOpen(false)}>
+            <DialogTitle>Model Already Selected</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                This model is already added to the comparison. Please select a different model.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setDuplicateDialogOpen(false)} autoFocus>
+                OK
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Paper>
       </div>
 
-      <div style={{ marginBottom: "16px" }}>
-        <Select
-          options={data.map((item) => ({
-            value: item.fullname,
-            label: item.fullname,
-          }))}
-          onChange={handleModelChange}
-          placeholder="Select a model"
-          isSearchable
-          styles={{
-            control: (base) => ({
-              ...base,
-              border: "1px solid #E2E8F0",
-              padding: "2px",
-              borderRadius: "4px",
-              marginRight: "8px",
-			  width: "50%",
-			  display: "inline-flex",
-            }),
-          }}
-        />
-		<div style={{width: "50%", display:"inline-flex" }}>
-
-		</div>
-
-      </div>
-
-      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "16px" }}>
+        <label style={{ marginRight: "8px", fontWeight: "500" }}>Selected models:</label>
         {selectedModels.map((model) => (
           <div
             key={model}
@@ -177,6 +227,7 @@ export default function Co2Comparison({data}) {
           >
             {model}
             <button
+              onClick={() => setModelToRemove(model)}
               style={{
                 backgroundColor: "transparent",
                 border: "1px solid #E2E8F0",
@@ -186,45 +237,46 @@ export default function Co2Comparison({data}) {
                 cursor: "pointer",
                 color: "#E53E3E"
               }}
-              onClick={() => setModelToRemove(model)}
             >
               ✕
             </button>
-            <Dialog
-              open={Boolean(modelToRemove)}
-              onClose={() => setModelToRemove(null)}
-            >
-              <DialogTitle>Remove Model</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  Are you sure you want to remove <strong>{modelToRemove}</strong> from the comparison?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setModelToRemove(null)} color="primary">
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    removeModel(modelToRemove);
-                    setModelToRemove(null);
-                  }}
-                  color="error"
-                  variant="contained"
-                >
-                  Confirm
-                </Button>
-              </DialogActions>
-            </Dialog>
           </div>
         ))}
       </div>
+      <Dialog open={!!modelToRemove} onClose={() => setModelToRemove(null)}>
+        <DialogTitle>Remove Model</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to remove <strong>{modelToRemove}</strong> from the comparison?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setModelToRemove(null)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              removeModel(modelToRemove);
+              setModelToRemove(null);
+            }}
+            color="error"
+            variant="contained"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <ResponsiveContainer width="100%" height={300}>
         { mode === MODES.CO2 ? (
           <BarChart data={chartData}>
             <XAxis dataKey="name" />
-            <YAxis />
+            <YAxis 
+              label={{ 
+                value: 'CO₂ Emissions (kg)', 
+                angle: -90, 
+                position: 'center', 
+                offset: 10 
+              }} 
+            />
             <Tooltip
             formatter={(value, name) => {
               const formattedValue = value;
