@@ -9,7 +9,6 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart,
   Scatter, CartesianGrid, Legend, Label, LabelList,
 } from "recharts";
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 // const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 // const checkbox_labels = ["Average ⬆️", "IFEval", "BBH", "MATH Lvl 5", "GPQA", "MUSR", "MMLU-PRO"];  // Just a heads up we need the emoji to get the average data
@@ -86,9 +85,9 @@ export default function Co2Comparison({data}) {
 
   const featureMap = [
     { label: "🌱 Environmental Impact", type: "section" },
-    { label: "CO₂ Cost (kg)", key: "CO₂ cost (kg)", transform: (val) => val?.toFixed(2) },
-    { label: "Kms Driven", key: "CO₂ cost (kg)", transform: (val) => ((val / 0.393) * 1.60934).toFixed(0) },
-    { label: "Smartphones Charged", key: "CO₂ cost (kg)", transform: (val) => (val / 0.0124).toFixed(0) },
+    { label: "🏭 CO₂ Cost (kg)", key: "CO₂ cost (kg)", transform: (val) => val?.toFixed(2) },
+    { label: "🚗 Kms Driven", key: "CO₂ cost (kg)", transform: (val) => ((val / 0.393) * 1.60934).toFixed(0) },
+    { label: "📱🔋Smartphones Charged", key: "CO₂ cost (kg)", transform: (val) => (val / 0.0124).toFixed(0) },
     
 
 
