@@ -66,11 +66,11 @@ export default function Co2Comparison({data}) {
 
   // const navigate = useNavigate();
 
-  const handleClick = (data) => {
-    //navigate (`/model/${encodeURIComponent(data.name)}`);
-    setSelectedModel(data);
-    setIsModalOpen(true);
-  };
+  // const handleClick = (data) => {
+  //   //navigate (`/model/${encodeURIComponent(data.name)}`);
+  //   setSelectedModel(data);
+  //   setIsModalOpen(true);
+  // };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -88,7 +88,7 @@ export default function Co2Comparison({data}) {
     { label: "Smartphones Charged", key: "CO₂ cost (kg)", transform: (val) => (val / 0.0124).toFixed(0) },
 
 
-    { label: "📊 Performance", type: "section" },
+    { label: "📊 Performance (0 - 100)", type: "section" },
     { label: "Average", key: "Average ⬆️", transform: (val) => val?.toFixed(2) },
     { label: "IFEval", key: "IFEval", transform: (val) => val?.toFixed(2) },
     { label: "BBH", key: "BBH", transform: (val) => val?.toFixed(2) },
@@ -231,7 +231,7 @@ export default function Co2Comparison({data}) {
               return [formattedValue, name === "co2" ? "CO₂ (kg)" : "Performance"];
             }}
             labelFormatter={(label) => `Model: ${label}`} />
-			{<Bar dataKey="co2"     fill="#8884d8" onClick={handleClick} LabelList={{dataKey:"co2", position:"top"}} />}
+			{<Bar dataKey="co2"     fill="#8884d8" LabelList={{dataKey:"co2", position:"top"}} />}
 			</BarChart>
         ) : (
           <ScatterChart margin={{ top: 20, right: 40, bottom: 40, left: 60 }}>
@@ -255,7 +255,7 @@ export default function Co2Comparison({data}) {
             <Tooltip
               labelFormatter={(label) => `Model: ${label}`}
             />
-              <Scatter name="Models" data={chartData} fill="#3182CE" onClick={handleClick}>
+              <Scatter name="Models" data={chartData} fill="#3182CE">
                 <LabelList dataKey="name" position="top" />
             </Scatter>
           </ScatterChart>
@@ -322,88 +322,90 @@ export default function Co2Comparison({data}) {
       )}
 
 
-      <TableContainer component={Paper} style={{ marginTop: 32, backgroundColor: "#1e1e1e", color: "white" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell style={{ color: "white" }}><strong>Feature</strong></TableCell>
-              {selectedModels.map((modelName) => (
-                <TableCell key={modelName} style={{ color: "white" }}>
-                  <strong>{modelName}</strong>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(() => {
-              let currentSection = "";
+{selectedModels.length > 0 && (
+  <TableContainer component={Paper} style={{ marginTop: 32, backgroundColor: "#1e1e1e", color: "white" }}>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell style={{ color: "white" }}><strong>Feature</strong></TableCell>
+          {selectedModels.map((modelName) => (
+            <TableCell key={modelName} style={{ color: "white" }}>
+              <strong>{modelName}</strong>
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {(() => {
+          let currentSection = "";
 
-              return featureMap.map((feature, idx) => {
-                if (feature.type === "section") {
-                  currentSection = feature.label;
+          return featureMap.map((feature, idx) => {
+            if (feature.type === "section") {
+              currentSection = feature.label;
+              return (
+                <TableRow key={"section-" + idx}>
+                  <TableCell
+                    colSpan={selectedModels.length + 1}
+                    style={{
+                      backgroundColor: "#2D3748",
+                      color: "#ffffff",
+                      fontWeight: "bold",
+                      fontSize: "16px"
+                    }}
+                  >
+                    {feature.label}
+                  </TableCell>
+                </TableRow>
+              );
+            }
+
+            return (
+              <TableRow key={feature.label}>
+                <TableCell style={{ color: "white" }}>{feature.label}</TableCell>
+                {selectedModels.map((modelName) => {
+                  const model = data.find((d) => d.fullname === modelName);
+                  const value = model?.[feature.key];
+
+                  const isPerformance = currentSection === "📊 Performance (0 - 100)";
+
                   return (
-                    <TableRow key={"section-" + idx}>
-                      <TableCell
-                        colSpan={selectedModels.length + 1}
-                        style={{
-                          backgroundColor: "#2D3748",
-                          color: "#ffffff",
-                          fontWeight: "bold",
-                          fontSize: "16px"
-                        }}
-                      >
-                        {feature.label}
-                      </TableCell>
-                    </TableRow>
+                    <TableCell key={modelName + feature.label} style={{ color: "#e0e0e0" }}>
+                      {isPerformance ? (
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <div style={{
+                            flexGrow: 1,
+                            height: "8px",
+                            backgroundColor: "#2D3748",
+                            borderRadius: "4px",
+                            overflow: "hidden"
+                          }}>
+                            <div style={{
+                              width: `${Math.min(100, value).toFixed(0)}%`,
+                              height: "100%",
+                              backgroundColor: "#90cdf4"
+                            }} />
+                          </div>
+                          <span style={{ minWidth: "40px", textAlign: "right" }}>
+                            {feature.transform ? feature.transform(value) : value}
+                          </span>
+                        </div>
+                      ) : feature.isHTML ? (
+                        <span dangerouslySetInnerHTML={{ __html: value }} />
+                      ) : (
+                        feature.transform ? feature.transform(value) : String(value)
+                      )}
+                    </TableCell>
                   );
-                }
+                })}
+              </TableRow>
+            );
+          });
+        })()}
+      </TableBody>
+    </Table>
+  </TableContainer>
+)}
 
-                return (
-                  <TableRow key={feature.label}>
-                    <TableCell style={{ color: "white" }}>{feature.label}</TableCell>
-                    {selectedModels.map((modelName) => {
-                      const model = data.find((d) => d.fullname === modelName);
-                      const value = model?.[feature.key];
-
-                      const isPerformance = currentSection === "📊 Performance";
-
-                      return (
-                        <TableCell key={modelName + feature.label} style={{ color: "#e0e0e0" }}>
-                          {isPerformance ? (
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                              <div style={{
-                                flexGrow: 1,
-                                height: "8px",
-                                backgroundColor: "#2D3748",
-                                borderRadius: "4px",
-                                overflow: "hidden"
-                              }}>
-                                <div style={{
-                                  width: `${Math.min(100, value).toFixed(0)}%`,
-                                  height: "100%",
-                                  backgroundColor: "#90cdf4"
-                                }} />
-                              </div>
-                              <span style={{ minWidth: "40px", textAlign: "right" }}>
-                                {feature.transform ? feature.transform(value) : value}
-                              </span>
-                            </div>
-                          ) : feature.isHTML ? (
-                            <span dangerouslySetInnerHTML={{ __html: value }} />
-                          ) : (
-                            feature.transform ? feature.transform(value) : String(value)
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              });
-            })()}
-          </TableBody>
-
-        </Table>
-      </TableContainer>
     </div>
   );
 }

@@ -30,14 +30,15 @@ export default function CO2vsPerformance({ data }) {
           </YAxis>
           <Tooltip
             cursor={{ strokeDasharray: "3 3" }}
-            formatter={(value, name) => {
+            formatter={(value, name, props) => {
               const formattedValue = value.toFixed(2);
-              return [formattedValue, name === "co2" ? "CO₂ (kg)" : "Performance"];
+              const modelName = props.payload.model; // Get the model name
+              const labelName = name === "co2" ? "CO₂ (kg)" : "Performance (0 - 100)";
+              return [`${formattedValue}`, `${labelName} - ${modelName}`]; // Show model name in the label
             }}
             labelFormatter={(label, payload) => {
               if (payload && payload.length > 0) {
-                // console.log(`Model: ${payload[0].payload.model}`);
-                return `Model: ${payload[0].payload.model}`; // Use model name
+                return `Model: ${payload[0].payload.model}`; // Ensure model name appears at the top
               }
               return `Model: Unknown`;
             }}
