@@ -19,7 +19,7 @@ export default function WhatIsHF() {
         <h2
           style={{ display: "inline-block", fontSize: "24px", fontWeight: "bold", color: "#2D3748", cursor: "pointer", margin:0}}
         >
-          What are these tests?
+          Where do these values come from?
         </h2>
       </div>
       {isOpen && (

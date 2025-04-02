@@ -28,11 +28,19 @@ export default function GeneralInfo() {
             Large Learning Models (LLM's) have increased in use significantly since 2018, and with it come concerns their environmental impact. <br/>
             This website aims to educate users on the often invisible impacts of using some of these models, and potentially provide some better alternatives to them. This only covers the cost of using the existing models, 
             it does not include the cost of training them in any way. 
-
-            TODO: Add more data
           </p>
 
-
+          <p> 
+            Bringing attention to the true cost of using several models can help users in making more informed decisions on which models 
+            to use, or if they should use them at all. If a model is to be used, a user may as well use the model which gives the 
+            best performance for the lowest emmission for the desired use case. <br/> 
+            As an example, on pure average performance MaziyarPanahi/calme-3.2-instruct-78b
+            is ranked the highest overall, with an average score of 52.08%, for a CO2 cost of 66.01kg. Just looking at the numbers however, 
+            the dfurman/CalmeRys-78B-Orpo-v0.1 model has an average score of 51.23%, matching or even exceeding the other model, while having 
+            a CO2 cost of 25.99kg, less than half. Along with this, there are instances of models which are very specialised for certain 
+            purposes but perform poorly on average. If one of these models has low CO2 cost, then it may still be the best tool to use 
+            for that desired purpose. 
+          </p>
 
         </div>
       )}

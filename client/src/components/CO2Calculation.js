@@ -19,7 +19,7 @@ export default function CO2Calculation() {
         <h2
           style={{ display: "inline-block", fontSize: "24px", fontWeight: "bold", color: "#2D3748", cursor: "pointer", margin:0}}
         >
-          How are these numbers determined?
+          How are the emissions calculated?
         </h2>
       </div>
       {isOpen && (
