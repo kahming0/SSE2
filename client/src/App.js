@@ -1,4 +1,7 @@
 import './App.css';
+import './HomeBar.css';
+import CO2Calculation from "./components/CO2Calculation.js";
+import HomeBar from './components/HomeBar.js';
 import CO2Compare from "./components/CO2Compare.js";
 import TopCO2BarChart from './components/TopCO2.js';
 import CO2vsPerformance from './components/CO2vsPerformance.js';
@@ -35,10 +38,17 @@ function App() {
 
   return (
     <Router basename="/SSE2">
-      <Box sx={{ width: '100%', padding: 2 }}>
+      <Box sx={{ width: '100%', padding: 2, paddingBottom: 0, paddingRight: 0, boxSizing: 'border-box'}}>
         <h1 className="text-2xl font-bold mb-4">Hugging Face Model Carbon Tool</h1>
         <h2 className="text-xl mb-4">Explore and compare the CO₂ costs of Hugging Face's models</h2>
+	  </Box>
 
+	  <Box sx={{ width: '100%', backgroundColor:'#CCCCCC', boxSizing: 'border-box'}}>
+		{/* <CO2Calculation/> */}
+		<HomeBar/>
+	  </Box>
+
+	  <Box sx={{ width: '100%', padding: 2, paddingTop: 0, paddingRight: 0, boxSizing: 'border-box'}}>
         <Tabs value={tabIndex} onChange={handleTabChange} aria-label="CO2 Tabs">
           <Tab label="Compare Models" />
           <Tab label="Compare Benchmarks" />
