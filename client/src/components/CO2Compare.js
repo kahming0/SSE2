@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
   Button, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow, Paper, Autocomplete, TextField, Box, Stack, FormControl, InputLabel, 
-  Select, MenuItem, Typography
+  Select, MenuItem, Typography, Collapse, IconButton, Slider, Checkbox, FormGroup,
+  FormControlLabel
 } from '@mui/material';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart,
@@ -36,6 +37,19 @@ export default function Co2Comparison({data}) {
   const [limitDialogOpen, setLimitDialogOpen] = useState(false);
   const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
   const [infoDialogOpen, setInfoDialogOpen] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedArchitectures, setSelectedArchitectures] = useState([]);
+  const [chatTemplateOnly, setChatTemplateOnly] = useState(false);
+  const [emissionRange, setEmissionRange] = useState([0, 100]);
+  const maxCO2 = Math.ceil(Math.max(...data.map(d => parseFloat(d["CO₂ cost (kg)"]) || 0)));
+
+  useEffect(() => {
+    const co2Values = data.map(d => parseFloat(d["CO₂ cost (kg)"])).filter(val => !isNaN(val));
+    if (co2Values.length > 0) {
+      const max = Math.ceil(Math.max(...co2Values));
+      setEmissionRange([0, max]);
+    }
+  }, [data]);
 
   const removeModel = (model) => {
     setSelectedModels(selectedModels.filter((m) => m !== model));
@@ -131,6 +145,23 @@ export default function Co2Comparison({data}) {
     setSelectedModels([...selectedModels, modelName]);
     setTempValue(null);
   }
+
+  const filteredOptions = data
+  .filter((item) => {
+    const matchesArchitecture = selectedArchitectures.length === 0 || selectedArchitectures.includes(item.Architecture);
+    const matchesChatTemplate = !chatTemplateOnly || item["Chat Template"];
+    const co2 = parseFloat(item["CO₂ cost (kg)"]);
+    const matchesEmission = co2 >= emissionRange[0] && co2 <= emissionRange[1];
+    return matchesArchitecture && matchesChatTemplate && matchesEmission;
+  })
+  .map((item) => item.fullname)
+  .filter((name) => !selectedModels.includes(name));
+
+  const handleResetFilters = () => {
+    setSelectedArchitectures([]);
+    setChatTemplateOnly(false);
+    setEmissionRange([0, maxCO2]);
+  };
   
   return (
     <div>
@@ -138,6 +169,114 @@ export default function Co2Comparison({data}) {
 
       <div style={{ marginBottom: "16px" }}>
         <Paper sx={{ p: 3, mb: 3 }}>
+          <Box sx={{ minWidth: 250, mb: 1 }}>
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              variant="outlined"
+              size="small"
+              sx={{ textTransform: "none", ml: 1 }}
+              fullWidth
+            >
+              {showFilters ? "Hide Search Filters" : "Show Search Filters"}
+            </Button>
+            < Box >
+              <Button
+                onClick={handleResetFilters}
+                variant="contained"
+                size="small"
+                color="error"
+                sx={{ textTransform: "none", ml: 1 }}
+              >
+                Reset Filters
+              </Button>
+            </Box>
+          </Box>
+          <Collapse in={showFilters}>
+            <Box sx={{ p: 2, border: '1px solid #E2E8F0', borderRadius: 2, mt: 2, backgroundColor: '#F9FAFB' }}>
+              <Stack spacing={2}>
+
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Architecture</Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: 1,
+                    }}
+                  >
+                    {[...new Set(data.map((d) => d.Architecture))]
+                      .filter(Boolean)
+                      .map((arch) => {
+                        const isSelected = selectedArchitectures.includes(arch);
+                        return (
+                          <Box
+                            key={arch}
+                            onClick={() => {
+                              setSelectedArchitectures((prev) =>
+                                isSelected
+                                  ? prev.filter((a) => a !== arch)
+                                  : [...prev, arch]
+                              );
+                            }}
+                            sx={{
+                              px: 2,
+                              py: 1,
+                              borderRadius: 2,
+                              border: '1px solid',
+                              cursor: 'pointer',
+                              userSelect: 'none',
+                              fontSize: '0.875rem',
+                              bgcolor: isSelected ? 'primary.main' : 'background.paper',
+                              color: isSelected ? 'white' : 'text.primary',
+                              borderColor: isSelected ? 'primary.main' : 'grey.300',
+                              '&:hover': {
+                                borderColor: 'primary.main',
+                              },
+                            }}
+                          >
+                            {arch}
+                          </Box>
+                        );
+                      })}
+                  </Box>
+                </Box>
+
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={chatTemplateOnly}
+                        onChange={(e) => setChatTemplateOnly(e.target.checked)}
+                      />
+                    }
+                    label="Only show models with a chat template"
+                  />
+                </FormGroup>
+
+                <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography sx={{ whiteSpace: 'nowrap', minWidth: 100 }}>
+                      CO₂ Cost (kg)
+                    </Typography>
+                    <Slider
+                      value={emissionRange}
+                      onChange={(e, newVal) => setEmissionRange(newVal)}
+                      valueLabelDisplay="auto"
+                      min={0}
+                      max={Math.ceil(Math.max(...data.map(d => parseFloat(d["CO₂ cost (kg)"] || 0))) || 100)}
+                    />
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 1 }}>
+                    <Typography variant="caption" color="text.secondary">{emissionRange[0]}</Typography>
+                    <Typography variant="caption" color="text.secondary">{emissionRange[1]}</Typography>
+                  </Box>
+                </Box>
+              </Stack>
+            </Box>
+            
+          </Collapse>
+
+
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center" flexWrap="wrap">
             <FormControl size="small" sx={{ minWidth: 200 }}>
               <InputLabel id="mode-select-label">Graph mode</InputLabel>
@@ -154,10 +293,7 @@ export default function Co2Comparison({data}) {
             </FormControl>
 
             <Autocomplete
-              options={
-                data.map((item) => item.fullname)
-                .filter((name) => !selectedModels.includes(name))
-              }
+              options={filteredOptions}
               value={tempValue}
               onChange={(event, newValue) => setTempValue(newValue)}
               renderInput={(params) => (
