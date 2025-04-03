@@ -169,13 +169,13 @@ export default function Co2Comparison({data}) {
 
       <div style={{ marginBottom: "16px" }}>
         <Paper sx={{ p: 3, mb: 3 }}>
-          <Box sx={{ minWidth: 250, mb: 1 }}>
+          <Box sx={{ minWidth: 250, mb: 1 }} display={"flex"}>
             <Button
               onClick={() => setShowFilters(!showFilters)}
               variant="outlined"
               size="small"
               sx={{ textTransform: "none", ml: 1 }}
-              fullWidth
+              style={{ width : "50%" }}
             >
               {showFilters ? "Hide Search Filters" : "Show Search Filters"}
             </Button>

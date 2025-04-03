@@ -168,6 +168,20 @@ export default function Co2Comparison({ data }) {
       return;
     }
   
+    var setavg = true;
+
+    // Basically this little snippet checks if anything is checked, and if nothing is checked just yet we default to turning on average.
+    for (var i = 0; i < checkbox_labels.length; i++) {
+      if (checkstates[i] == true) {
+        setavg = false;
+        break;
+      }
+    }
+
+    if (setavg) {
+      checkstates[0] = true;
+    }
+    
     setSelectedModels([...selectedModels, modelName]);
     setTempValue(null);
   }
