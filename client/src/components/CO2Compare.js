@@ -20,19 +20,10 @@ const MODES = {
   SCATTER: "CO₂ vs Performance",
 };
 
-function getCO2Equivalents(co2Kg) {
-  return {
-    kmsDriven: ((co2Kg / 0.393) * 1.60934).toFixed(0),
-    smartphonesCharged: (co2Kg / 0.0124).toFixed(0),
-  };
-}
-
 export default function Co2Comparison({data}) {
   // console.log(data);
   const [selectedModels, setSelectedModels] = useState([]);
   const [mode, setMode] = useState(MODES.CO2);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState(null);
   const [tempValue, setTempValue] = useState(null);
   const [limitDialogOpen, setLimitDialogOpen] = useState(false);
   const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
@@ -86,14 +77,6 @@ export default function Co2Comparison({data}) {
   //   setSelectedModel(data);
   //   setIsModalOpen(true);
   // };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedModel(null);
-  };
-  
-
-  const equivalents = selectedModel ? getCO2Equivalents(selectedModel.co2) : null;
 
   const [modelToRemove, setModelToRemove] = useState(null);
 
@@ -450,66 +433,6 @@ export default function Co2Comparison({data}) {
         )}
       </ResponsiveContainer>
 
-      {isModalOpen && selectedModel && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          zIndex: 1000,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center"
-        }}>
-          <div style={{
-            background: "white",
-            padding: "24px",
-            borderRadius: "8px",
-            minWidth: "300px",
-            maxWidth: "500px",
-            maxHeight: "80vh",
-            overflowY: "auto",
-          }}>
-            <h2>{selectedModel.name}</h2>
-            <ul>
-              <li><strong>CO₂ Cost (kg):</strong> {selectedModel.co2}</li>
-              <li><strong>Performance:</strong> {selectedModel.performance}</li>
-              <li>
-                <strong>Chat Template:</strong> {selectedModel.chat_template}
-              </li>
-              <li><strong>Energy Efficiency Rating:</strong> A (Placeholder)</li>
-            </ul>
-
-            <hr style={{ margin: "16px 0" }} />
-
-            <div>
-              <h3 style={{ fontWeight: "bold", marginBottom: "8px" }}>CO₂-to-Everyday Equivalent:</h3>
-              <ul style={{ listStyle: "disc", marginLeft: "20px" }}>
-                <li>{equivalents.kmsDriven} km driven</li>
-                <li>{equivalents.smartphonesCharged} smartphones charged</li>
-              </ul>
-            </div>
-
-            <button
-              onClick={closeModal}
-              style={{
-                backgroundColor: "#E53E3E",
-                padding: "8px 16px",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-
       {selectedModels.length > 0 && (
         <TableContainer component={Paper} style={{ marginTop: 32, backgroundColor: "#1e1e1e", color: "white" }}>
           <Table>
@@ -630,12 +553,12 @@ export default function Co2Comparison({data}) {
 
           <Typography variant="subtitle1" fontWeight="bold">📋 IFEval (Instruction Following)</Typography>
           <Typography variant="body2" gutterBottom>
-            Checks if the model follows directions — like “Respond in bullet points” or “Write as a poem.”
+            Checks if the model follows directions — like "Respond in bullet points" or "Write as a poem."
           </Typography>
 
           <Typography variant="subtitle1" fontWeight="bold">🧠 BBH (Big Bench Hard)</Typography>
           <Typography variant="body2" gutterBottom>
-            A mix of tough tasks across logic, math, and common sense. It’s like a brainy quiz.
+            A mix of tough tasks across logic, math, and common sense. It's like a brainy quiz.
           </Typography>
 
           <Typography variant="subtitle1" fontWeight="bold">🧮 MATH (Level 5)</Typography>
@@ -702,7 +625,7 @@ export default function Co2Comparison({data}) {
         <DialogContent dividers>
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}> 🌍 CO₂ Emissions</Typography>
           <Typography variant="body1" gutterBottom>
-            These numbers show how much carbon dioxide (CO₂) is released when a model runs. We’ve also translated that into things we all understand — like car travel or phone charging.
+            These numbers show how much carbon dioxide (CO₂) is released when a model runs. We've also translated that into things we all understand — like car travel or phone charging.
           </Typography>
 
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>🚗 Kilometers Driven</Typography>
@@ -715,7 +638,7 @@ export default function Co2Comparison({data}) {
             <li>Accounts for tailpipe and greenhouse gas emissions</li>
           </ul>
           <Typography variant="body2" gutterBottom>
-            So, if a model emits 25kg of CO₂, that’s like driving roughly <strong>100 km</strong> in a typical car.
+            So, if a model emits 25kg of CO₂, that's like driving roughly <strong>100 km</strong> in a typical car.
           </Typography>
 
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>📱 Smartphones Charged</Typography>

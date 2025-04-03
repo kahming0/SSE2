@@ -523,12 +523,12 @@ export default function Co2Comparison({ data }) {
 
           <Typography variant="subtitle1" fontWeight="bold">📋 IFEval (Instruction Following)</Typography>
           <Typography variant="body2" gutterBottom>
-            Checks if the model follows directions — like “Respond in bullet points” or “Write as a poem.”
+            Checks if the model follows directions — like "Respond in bullet points" or "Write as a poem."
           </Typography>
 
           <Typography variant="subtitle1" fontWeight="bold">🧠 BBH (Big Bench Hard)</Typography>
           <Typography variant="body2" gutterBottom>
-            A mix of tough tasks across logic, math, and common sense. It’s like a brainy quiz.
+            A mix of tough tasks across logic, math, and common sense. It's like a brainy quiz.
           </Typography>
 
           <Typography variant="subtitle1" fontWeight="bold">🧮 MATH (Level 5)</Typography>
@@ -595,7 +595,7 @@ export default function Co2Comparison({ data }) {
         <DialogContent dividers>
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}> 🌍 CO₂ Emissions</Typography>
           <Typography variant="body1" gutterBottom>
-            These numbers show how much carbon dioxide (CO₂) is released when a model runs. We’ve also translated that into things we all understand — like car travel or phone charging.
+            These numbers show how much carbon dioxide (CO₂) is released when a model runs. We've also translated that into things we all understand — like car travel or phone charging.
           </Typography>
 
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>🚗 Kilometers Driven</Typography>
@@ -608,7 +608,7 @@ export default function Co2Comparison({ data }) {
             <li>Accounts for tailpipe and greenhouse gas emissions</li>
           </ul>
           <Typography variant="body2" gutterBottom>
-            So, if a model emits 25kg of CO₂, that’s like driving roughly <strong>100 km</strong> in a typical car.
+            So, if a model emits 25kg of CO₂, that's like driving roughly <strong>100 km</strong> in a typical car.
           </Typography>
 
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>📱 Smartphones Charged</Typography>

@@ -9,7 +9,7 @@ export default function TopCO2({ data }) {
   const formatData = (arr) =>
     arr.map((item) => ({
       name: item.fullname,
-      co2: parseFloat(item["CO₂ cost (kg)"].toFixed(2)), // Ensure it's a number after formatting
+      co2: parseFloat(item["CO₂ cost (kg)"].toFixed(2)),
     }));
 
   return (
@@ -21,9 +21,9 @@ export default function TopCO2({ data }) {
         <BarChart data={formatData(lowest)} layout="vertical" margin={{ top: 10, right: 30, left: 100, bottom: 10 }}>
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" width={180} />
-          <Tooltip formatter={(value) => value.toFixed(2)} /> {/* Format tooltip */}
+          <Tooltip formatter={(value) => value.toFixed(2)} /> 
           <Bar dataKey="co2" fill="#48BB78">
-            <LabelList dataKey="co2" position="right" formatter={(value) => value.toFixed(2)} /> {/* Format labels */}
+            <LabelList dataKey="co2" position="right" formatter={(value) => value.toFixed(2)} />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
