@@ -19,7 +19,7 @@ export default function GeneralInfo() {
         <h2
           style={{ display: "inline-block", fontSize: "24px", fontWeight: "bold", color: "#2D3748", cursor: "pointer", margin:0}}
         >
-          General Info
+          General info
         </h2>
       </div>
       {isOpen && (

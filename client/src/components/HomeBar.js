@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CO2Calculation from './CO2Calculation';
 import WhatIsHF from './info_pages/WhatIsHF';
 import GeneralInfo from './info_pages/generalInfo';
+import FeatureList from './info_pages/feature_list';
 import '../HomeBar.css';
 
 export default function HomeBar() {
@@ -30,6 +31,9 @@ export default function HomeBar() {
 			<div>	
 				<div>
 					<GeneralInfo/>
+				</div>	
+				<div>
+					<FeatureList/>
 				</div>			
 				<div>
 					<WhatIsHF/>

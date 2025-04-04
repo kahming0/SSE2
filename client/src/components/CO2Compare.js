@@ -525,7 +525,7 @@ export default function Co2Comparison({data}) {
               <li>
                 <strong>Chat Template:</strong> {selectedModel.chat_template}
               </li>
-              <li><strong>Energy Efficiency Rating:</strong> A (Placeholder)</li>
+              {/* <li><strong>Energy Efficiency Rating:</strong> A (Placeholder)</li> */}
             </ul>
 
             <hr style={{ margin: "16px 0" }} />
