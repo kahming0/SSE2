@@ -393,7 +393,7 @@ export default function Co2Comparison({data}) {
                 value: 'CO₂ Emissions (kg)', 
                 angle: -90, 
                 position: 'center', 
-                offset: 10 
+                dx: -10 
               }} 
             />
             <Tooltip

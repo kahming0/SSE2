@@ -47,7 +47,7 @@ export default function Co2Comparison({ data }) {
   };
 
   // Checkbox states. Fills it with an array of length checkbox_labels so if we add more please add it there.
-  const [checkstates, checkboxStates] = useState(Array(checkbox_labels.length).fill(false));
+  const [checkstates, checkboxStates] = useState(Array(checkbox_labels.length + 1).fill(false));
 
   const [graphState, setGraphState] = useState(false);
 
@@ -82,19 +82,28 @@ export default function Co2Comparison({ data }) {
 
   const chartData = selectedModels.map((model) => {
     const modelData = data.find((item) => item.fullname === model);
+    const co2     = modelData ? parseFloat(modelData["CO₂ cost (kg)"]).toFixed(2) : 0;
+    const average = modelData ? parseFloat(modelData[checkbox_labels[0]]).toFixed(2) : 0;
+    const moe     = modelData ? parseFloat(modelData[checkbox_labels[1]]).toFixed(2) : 0;
+    const bbh     = modelData ? parseFloat(modelData[checkbox_labels[2]]).toFixed(2) : 0;
+    const mth     = modelData ? parseFloat(modelData[checkbox_labels[3]]).toFixed(2) : 0;
+    const gpqa    = modelData ? parseFloat(modelData[checkbox_labels[4]]).toFixed(2) : 0;
+    const musr    = modelData ? parseFloat(modelData[checkbox_labels[5]]).toFixed(2) : 0;
+    const mmlupro = modelData ? parseFloat(modelData[checkbox_labels[6]]).toFixed(2) : 0;
+
     return {
       name: model,
-      co2: modelData ? parseFloat(modelData["CO₂ cost (kg)"]).toFixed(2) : 0,
+      co2: co2,
       performance: modelData ? parseFloat(modelData["Average ⬆️"]).toFixed(2) : null,
       chat_template: modelData["Chat Template"] ? "Yes" : "No",
       energy_rating: "Placeholder",
-      average: modelData ? parseFloat(modelData[checkbox_labels[0]]).toFixed(2) : 0,
-      moe: modelData ? parseFloat(modelData[checkbox_labels[1]]).toFixed(2) : 0,
-      bbh: modelData ? parseFloat(modelData[checkbox_labels[2]]).toFixed(2) : 0,
-      mth: modelData ? parseFloat(modelData[checkbox_labels[3]]).toFixed(2) : 0,
-      gpqa: modelData ? parseFloat(modelData[checkbox_labels[4]]).toFixed(2) : 0,
-      musr: modelData ? parseFloat(modelData[checkbox_labels[5]]).toFixed(2) : 0,
-      mmlupro: modelData ? parseFloat(modelData[checkbox_labels[6]]).toFixed(2) : 0
+      average: checkstates[checkbox_labels.length] ? (average / co2).toFixed(2) : average,
+      moe:     checkstates[checkbox_labels.length] ? (moe / co2).toFixed(2)     : moe,
+      bbh:     checkstates[checkbox_labels.length] ? (bbh / co2).toFixed(2)     : bbh,
+      mth:     checkstates[checkbox_labels.length] ? (mth / co2).toFixed(2)     : mth,
+      gpqa:    checkstates[checkbox_labels.length] ? (gpqa / co2).toFixed(2)    : gpqa,
+      musr:    checkstates[checkbox_labels.length] ? (musr / co2).toFixed(2)    : musr,
+      mmlupro: checkstates[checkbox_labels.length] ? (mmlupro / co2).toFixed(2) : mmlupro
     }
   });
 
@@ -306,7 +315,7 @@ export default function Co2Comparison({ data }) {
           </Button>
         </DialogActions>
       </Dialog>
-        <div style={{ width: "50%", display: "inline-flex" }}>
+        <div style={{ width: "100%" }}>
 
           <FormGroup style={{ display: "inline-block" }}>
             <FormControlLabel control={<Checkbox checked={checkstates[0]} onChange={(e) => handleChange(e, 0)} />} label="Average" /> {/* Sorry I just really don't want the emoji in the label */}
@@ -316,6 +325,7 @@ export default function Co2Comparison({ data }) {
             <FormControlLabel control={<Checkbox checked={checkstates[4]} onChange={(e) => handleChange(e, 4)} />} label={checkbox_labels[4]} />
             <FormControlLabel control={<Checkbox checked={checkstates[5]} onChange={(e) => handleChange(e, 5)} />} label={checkbox_labels[5]} />
             <FormControlLabel control={<Checkbox checked={checkstates[6]} onChange={(e) => handleChange(e, 6)} />} label={checkbox_labels[6]} />
+            <FormControlLabel control={<Checkbox checked={checkstates[checkbox_labels.length]} onChange={(e) => handleChange(e, checkbox_labels.length)} />} label={"performance per kg CO2"} /> {/* This is a toggle to switch between just the raw performance score to being performance per kg co2. (So kind of like efficiency) */}
           </FormGroup>
 
         </div>
@@ -325,10 +335,10 @@ export default function Co2Comparison({ data }) {
           <XAxis dataKey="name" />
           <YAxis 
               label={{ 
-                value: 'Performance Score', 
+                value: checkstates[checkbox_labels.length] ? 'Performance Score / KG ' : 'Performance Score (%)', 
                 angle: -90, 
                 position: 'center', 
-                offset: 10 
+                dx: -10 
               }}/>
           <Tooltip
             formatter={(value, name) => [value, keyMapping[name]]}
