@@ -28,16 +28,16 @@ export default function CO2vsPerformance({ data }) {
   const allFormatted = data
     .map(item => ({
       model: item.fullname,
-      co2: parseFloat(item["CO₂ cost (kg)"]),
-      performance: parseFloat(item["Average ⬆️"]),
+      co2: parseFloat(item["CO₂ cost (kg)"]).toFixed(2),
+      performance: parseFloat(item["Average ⬆️"]).toFixed(2),
       architecture: item.Architecture,
     }))
     .filter(item => !isNaN(item.co2) && !isNaN(item.performance));
 
   const co2Values = allFormatted.map(d => d.co2);
   const perfValues = allFormatted.map(d => d.performance);
-  const co2Domain = [Math.min(...co2Values), Math.max(...co2Values)];
-  const perfDomain = [Math.min(...perfValues), Math.max(...perfValues)];
+  const co2Domain = [0, Math.max(...co2Values)];
+  const perfDomain = [0, Math.max(...perfValues)];
 
   const formatData = allFormatted.filter(item =>
     selectedArchitectures.length === 0 || selectedArchitectures.includes(item.architecture)
@@ -118,7 +118,7 @@ export default function CO2vsPerformance({ data }) {
           <Tooltip
             cursor={{ strokeDasharray: "3 3" }}
             formatter={(value, name, props) => {
-              const formattedValue = value.toFixed(2);
+              const formattedValue = value;
               const modelName = props.payload.model; 
               const labelName = name === "co2" ? "CO₂ (kg)" : "Performance (0 - 100)";
               return [`${formattedValue}`, `${labelName} - ${modelName}`];
