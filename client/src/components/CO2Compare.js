@@ -20,6 +20,8 @@ const MODES = {
   SCATTER: "CO₂ vs Performance",
 };
 
+
+
 export default function Co2Comparison({data}) {
   // console.log(data);
   const [selectedModels, setSelectedModels] = useState([]);
@@ -33,6 +35,8 @@ export default function Co2Comparison({data}) {
   const [chatTemplateOnly, setChatTemplateOnly] = useState(false);
   const [emissionRange, setEmissionRange] = useState([0, 100]);
   const maxCO2 = Math.ceil(Math.max(...data.map(d => parseFloat(d["CO₂ cost (kg)"]) || 0)));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(null);
 
   useEffect(() => {
     const co2Values = data.map(d => parseFloat(d["CO₂ cost (kg)"])).filter(val => !isNaN(val));
@@ -46,6 +50,59 @@ export default function Co2Comparison({data}) {
     setSelectedModels(selectedModels.filter((m) => m !== model));
   };
 
+
+  // This function handles the popup data and finds the top 3 best performance/emmissions ratio models with close performance to this model.
+  function popupInfo(model) {
+    const lower_bound = model["Average ⬆️"] - 10;
+    const currentArchitecture = model.architecture;
+
+    const generalList = [];
+    const architectureList = [];
+
+    for (var i = 0; i < data.length; i++) {
+      const newavg = parseFloat(data[i]["Average ⬆️"]);
+      if (newavg < lower_bound) {
+        // We have a minimum performance to make it somewhat similar to the chosen model
+        continue;
+      }
+
+      const co2Cost = parseFloat(data[i]["CO₂ cost (kg)"]);
+      generalList[generalList.length] = data[i];
+
+      if (data[i]["Architecture"] == currentArchitecture) {
+        architectureList[architectureList.length] = data[i];
+      }
+      
+    }
+
+    generalList.sort(function(a,b){
+      if(a["Average ⬆️"] / a["CO₂ cost (kg)"] > b["Average ⬆️"] / b["CO₂ cost (kg)"]){
+        return -1;
+      }
+    
+      return 1;
+    });
+
+    architectureList.sort(function(a,b){
+      if(a["Average ⬆️"] / a["CO₂ cost (kg)"] > b["Average ⬆️"] / b["CO₂ cost (kg)"]){
+        return -1;
+      }
+    
+      return 1;
+    });
+      
+    return {
+      kmsDriven: ((model.co2 / 0.393) * 1.60934).toFixed(0),
+      smartphonesCharged: (model.co2 / 0.0124).toFixed(0),
+      benchmarkRatio: model.average / model.co2,
+      topRatio: generalList.slice(0, 3),
+      archRatio: architectureList.slice(0, 3)
+    };
+  }
+
+  const popupData = selectedModel ? popupInfo(selectedModel) : null;
+
+
   const chartData = selectedModels.map((model) => {
     const modelData = data.find((item) => item.fullname === model);
     return {
@@ -54,6 +111,7 @@ export default function Co2Comparison({data}) {
       performance: modelData ? parseFloat(modelData["Average ⬆️"]).toFixed(2) : null,
       chat_template: modelData["Chat Template"] ? "Yes" : "No",
       energy_rating: "Placeholder",
+      architecture: modelData["Architecture"]
     }
   });
 
@@ -72,11 +130,16 @@ export default function Co2Comparison({data}) {
 
   // const navigate = useNavigate();
 
-  // const handleClick = (data) => {
-  //   //navigate (`/model/${encodeURIComponent(data.name)}`);
-  //   setSelectedModel(data);
-  //   setIsModalOpen(true);
-  // };
+  const handleClick = (data) => {
+    //navigate (`/model/${encodeURIComponent(data.name)}`);
+    setSelectedModel(data);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedModel(null);
+  };
 
   const [modelToRemove, setModelToRemove] = useState(null);
 
@@ -402,7 +465,7 @@ export default function Co2Comparison({data}) {
               return [formattedValue, name === "co2" ? "CO₂ (kg)" : "Performance"];
             }}
             labelFormatter={(label) => `Model: ${label}`} />
-			{<Bar dataKey="co2"     fill="#8884d8" LabelList={{dataKey:"co2", position:"top"}} />}
+			{<Bar dataKey="co2"     fill="#8884d8" onClick={handleClick} LabelList={{dataKey:"co2", position:"top"}} />}
 			</BarChart>
         ) : (
           <ScatterChart margin={{ top: 20, right: 40, bottom: 40, left: 60 }}>
@@ -432,6 +495,73 @@ export default function Co2Comparison({data}) {
           </ScatterChart>
         )}
       </ResponsiveContainer>
+
+      {isModalOpen && selectedModel && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          zIndex: 1000,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
+          <div style={{
+            background: "white",
+            padding: "24px",
+            borderRadius: "8px",
+            minWidth: "300px",
+            maxWidth: "500px",
+            maxHeight: "80vh",
+            overflowY: "auto",
+          }}>
+            <h2>{selectedModel.name}</h2>
+            <ul>
+              <li><strong>CO₂ Cost (kg):</strong> {selectedModel.co2}</li>
+              <li><strong>Performance:</strong> {selectedModel.performance}</li>
+              <li>
+                <strong>Chat Template:</strong> {selectedModel.chat_template}
+              </li>
+              <li><strong>Energy Efficiency Rating:</strong> A (Placeholder)</li>
+            </ul>
+
+            <hr style={{ margin: "16px 0" }} />
+
+            <div>
+              <h3 style={{ fontWeight: "bold", marginBottom: "8px" }}>Suggested alternatives with similar performance:</h3>
+              <ul style={{ listStyle: "disc", marginLeft: "20px" }}>
+                {popupData.topRatio[0] != null ? <li>1- {popupData.topRatio[0].fullname}. Performance/kg co2: {(popupData.topRatio[0]["Average ⬆️"] / popupData.topRatio[0]["CO₂ cost (kg)"]).toFixed(2)} </li> : null }
+                {popupData.topRatio[1] != null ? <li>2- {popupData.topRatio[1].fullname}. Performance/kg co2: {(popupData.topRatio[1]["Average ⬆️"] / popupData.topRatio[1]["CO₂ cost (kg)"]).toFixed(2)} </li> : null}
+                {popupData.topRatio[2] != null ? <li>3- {popupData.topRatio[2].fullname}. Performance/kg co2: {(popupData.topRatio[2]["Average ⬆️"] / popupData.topRatio[2]["CO₂ cost (kg)"]).toFixed(2)} </li> : null}
+              </ul>
+
+              <h3 style={{ fontWeight: "bold", marginBottom: "8px" }}>Best options of this architecture: </h3>
+              <ul style={{ listStyle: "disc", marginLeft: "20px" }}>
+                {popupData.archRatio[0] != null ? <li>1- {popupData.archRatio[0].fullname}. Performance/kg co2: {(popupData.archRatio[0]["Average ⬆️"] / popupData.archRatio[0]["CO₂ cost (kg)"]).toFixed(2)} </li> : null }
+                {popupData.archRatio[1] != null ? <li>2- {popupData.archRatio[1].fullname}. Performance/kg co2: {(popupData.archRatio[1]["Average ⬆️"] / popupData.archRatio[1]["CO₂ cost (kg)"]).toFixed(2)} </li> : null}
+                {popupData.archRatio[2] != null ? <li>3- {popupData.archRatio[2].fullname}. Performance/kg co2: {(popupData.archRatio[2]["Average ⬆️"] / popupData.archRatio[2]["CO₂ cost (kg)"]).toFixed(2)} </li> : null}
+              </ul>
+            </div>
+
+            <button
+              onClick={closeModal}
+              style={{
+                backgroundColor: "#E53E3E",
+                padding: "8px 16px",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {selectedModels.length > 0 && (
         <TableContainer component={Paper} style={{ marginTop: 32, backgroundColor: "#1e1e1e", color: "white" }}>
