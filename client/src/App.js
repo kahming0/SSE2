@@ -39,7 +39,7 @@ function App() {
   return (
     <Router basename="/SSE2">
       <Box sx={{ width: '100%', padding: 2, paddingBottom: 0, paddingRight: 0, boxSizing: 'border-box'}}>
-        <h1 className="text-2xl font-bold mb-4">Hugging Face Model Carbon Tool</h1>
+        <h1 className="text-2xl font-bold mb-4">Hugging Carbon</h1>
         <h2 className="text-xl mb-4">Explore and compare the CO₂ costs of Hugging Face's models</h2>
 	  </Box>
 
