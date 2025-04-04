@@ -40,6 +40,26 @@ export default function CO2vsPerformance({ data }) {
     selectedArchitectures.length === 0 || selectedArchitectures.includes(item.architecture)
   );
 
+  const groupedByArch = {};
+  formatData.forEach(item => {
+    if (!groupedByArch[item.architecture]) {
+      groupedByArch[item.architecture] = [];
+    }
+
+    groupedByArch[item.architecture].push(item);
+  });
+
+  const generateColorFromString = (str) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const color = "#" + ((hash >> 24) & 0xff).toString(16).padStart(2, '0') +
+                        ((hash >> 16) & 0xff).toString(16).padStart(2, '0') +
+                        ((hash >> 8) & 0xff).toString(16).padStart(2, '0');
+    return color.slice(0, 7);
+  };
+
   return (
     <div style={{ marginTop: "40px" }}>
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", color: "#2D3748" }}>
@@ -53,7 +73,7 @@ export default function CO2vsPerformance({ data }) {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(5, 1fr)',
             gap: 1,
             maxWidth: 600
           }}
@@ -97,8 +117,10 @@ export default function CO2vsPerformance({ data }) {
               return `Model: Unknown`;
             }}
           />
-          <Legend />
-          <Scatter name="Models" data={formatData} fill="#3182CE" />
+          <Legend verticalAlign="top" height={60} wrapperStyle={{ overflowX: 'auto', whiteSpace: 'nowrap'}} />
+          {Object.entries(groupedByArch).map(([arch, items]) => (
+            <Scatter key={arch} name={arch} data={items} fill={generateColorFromString(arch)} />
+          ))}
         </ScatterChart>
       </ResponsiveContainer>
     </div>
