@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CO2Calculation from './CO2Calculation';
-import WhatIsHF from '../WhatIsHF';
-import GeneralInfo from '../generalInfo';
+import WhatIsHF from './info_pages/WhatIsHF';
+import GeneralInfo from './info_pages/generalInfo';
 import '../HomeBar.css';
 
 export default function HomeBar() {
