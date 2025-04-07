@@ -9,7 +9,7 @@ visualizes the carbon emissions of AI models hosted on Hugging
 Face, providing transparency and enabling users to make informed,
 sustainability-conscious decisions.
 
-The data is provided by Huggingface at https://huggingface.co/datasets/open-llm-leaderboard/contents/resolve/main/data/train-00000-of-00001.parquet.
+The data is provided by Hugging Face at https://huggingface.co/datasets/open-llm-leaderboard/contents/resolve/main/data/train-00000-of-00001.parquet.
 
 # Development Instructions
 
