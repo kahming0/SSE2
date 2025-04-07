@@ -2,8 +2,7 @@
 
 As artificial intelligence (AI) usage increases, so does its environ-
 mental impact, with AI models consuming significant energy and
-contributing to carbon emissions. However, users often lack ac-
-cessible tools to visualize the sustainability of different models.
+contributing to carbon emissions. However, users often lack accessible tools to visualize the sustainability of different models.
 We introduce Hugging Carbon, a web-based platform that
 visualizes the carbon emissions of AI models hosted on Hugging
 Face, providing transparency and enabling users to make informed,
@@ -15,5 +14,5 @@ The data is provided by Hugging Face at https://huggingface.co/datasets/open-llm
 
 The website was implemented using React.js.
 
-- To start the website locally run: `npm start`.
-- To deploy your changes run: `npm run deploy`.
+- To start the website locally, run: `npm start`.
+- To deploy your changes, run: `npm run deploy`.
