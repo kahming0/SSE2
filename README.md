@@ -13,5 +13,5 @@ The data is provided by Hugging Face at https://huggingface.co/datasets/open-llm
 
 The website was implemented using React.js.
 
-- To start the website locally, run: `npm start`.
-- To deploy your changes, run: `npm run deploy`.
+- To start the website locally, move into the **client** directory, then run: `npm start`.
+- To deploy your changes, move into the **client** directory, then run: `npm run deploy`.
